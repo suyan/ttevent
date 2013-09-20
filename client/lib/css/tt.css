@@ -1,0 +1,33 @@
+
+ul#he-list li{
+    width:100%;
+    height: 100px;
+    position:relative;
+    background:#fff;
+    border:1px solid #D8DFEA;
+	float:left;
+}
+ul#he-list li a{
+    padding:15px 20px;
+    display:block;
+    background-color: #fff;
+    border-bottom:1px solid #F2F4F8;
+    border-top:1px solid #D8DFEA;
+}
+
+ul#he-list li a h3{ 
+    font-size:14px;
+    font-weight:bold;
+    padding:2px 0 5px 0;
+	text-transform:uppercase;
+}
+ul#he-list li a img{
+	height: 30px
+    float:left;
+    margin:5px 10px 0px 0px;
+    padding:3px;
+    background:#fff;
+    border:1px solid #D8DFEA;
+}
+.scrollBar{background:white;}
+.jqmscrollBar {background:white !important;}

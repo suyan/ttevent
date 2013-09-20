@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>ttevent-login</title>
+	<meta name="author" content="weilu544@gmail.com">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="stylesheet" type="text/css" href="lib/jq.ui1.css" title="default"/>
+	<script type="text/javascript" charset="utf-8" src="lib/jq.mobi.js"></script>
+	<script type="text/javascript" src="lib/tt.core.js"></script>
+	<script type="text/javascript" src="lib/tt.js"></script>
+
+</head>
+<body>
+	<div id="JQUi">
+	<header>
+		<img src="images/title.png" id="logo" width=100%/>
+	</header>
+	<center>
+	<form>
+		<label for="email" >邮箱:</label>
+		<br/>
+		<input type="text" id="email" class="jq-ui-forms" placeholder="Email@ttevent.com" />
+		<br/>
+		<label for="password">密码:</label>
+		<br/>
+		<span><input type="password1" id="password" class='jq-ui-forms' /></span>	
+		<label for="password">确认密码:</label>
+		<br/>
+		<span><input type="password2" id="password" class='jq-ui-forms' /></span>	
+		<br>
+		<a class="button" id="login_button" style="width: 120px" onclick="change_page( 'index' )" >返回登录</a>
+		<a class="button" id="register_button" style="width: 120px" onClick=" register() ">注册</a>
+	</center>
+	</div>
+</body>
+</html>

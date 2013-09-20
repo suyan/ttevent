@@ -1,0 +1,166 @@
+<extend name="Setting:base" />
+<block name="css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/jquery.Jcrop.css">
+<style type="text/css">
+</style>
+</block>
+<block name="main">
+  <div class="span10">
+    <div class="row">
+      <div class="span5">
+        <form id="avatarForm" action="{:U('Setting/uploadImage')}" method="POST">
+          <p class="text-info">请选择头像文件</p>
+          <input type="file" name="pic" id="fileupload">
+          <div class="progress hide">
+            <div class="bar"><div class="precent"></div></div>
+          </div>
+          <div class="row">
+            <div id="src_img" class="span6">
+              <img id="src" src="">
+            </div>
+            <div id="submit_field" class="span6 hide">
+              <a id="submit_coords" class="btn btn-primary" href="javascript:;" data-loading-text="裁剪中...">确认裁剪</a>
+            </div>
+          </div>
+          <div id="coords" class="hide">0,0,0,0</div>
+        </form><!-- 图片上传部分 -->
+      </div>
+      <div class="span5">
+        <h4>预览</h4>
+        <table class="table">
+          <tr><td>大图</td><td><div id="large_div" style="width: 140px;height: 140px;overflow: hidden;"><img id="large_img" class="jcrop-preview" src="{:!empty($avatar['large_img'])?$avatar['large_img']:''}" style="width:140px;height:140px;"></div></td></tr><tr>
+          <td>中图</td><td><div id="middle_div" style="width: 50px;height: 50px;overflow: hidden;"><img id="middle_img" class="jcrop-preview" src="{:!empty($avatar['middle_img'])?$avatar['middle_img']:''}" style="width:50px;height:50px;"></div></td></tr><tr>
+          <td>小图</td><td><div id="small_div" style="width: 30px;height: 30px;overflow: hidden;"><img id="small_img" class="jcrop-preview" src="{:!empty($avatar['small_img'])?$avatar['small_img']:''}" style="width:30px;height:30px;"></div></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.Jcrop.js"></script>
+<script type="text/javascript">
+$(function () { 
+  //裁剪部分
+  var ret_width,ret_height;
+  var bar = $('.bar'); 
+  var percent = $('.precent'); 
+  var progress = $(".progress");
+  var submit_field = $('#submit_field');
+  var jcrop_api,boundx,boundy;
+  function updatePreview(c){
+    if(parseInt(c.w)>0){
+      var rx=100/c.w;
+      var ry=100/c.h;
+      $("#preview").css({
+        width:Math.round(rx*boundx)+"px",
+        height:Math.round(ry*boundy)+"px",
+        marginLeft:"-"+Math.round(rx*c.x)+"px",
+        marginTop:"-"+Math.round(ry*c.y)+"px"
+      });
+      var rx=180/c.w;
+      var ry=180/c.h;
+      $("#large_img").css({
+        width:Math.round(rx*boundx)+"px",
+        height:Math.round(ry*boundy)+"px",
+        marginLeft:"-"+Math.round(rx*c.x)+"px",
+        marginTop:"-"+Math.round(ry*c.y)+"px"
+      });
+      var rx=50/c.w;
+      var ry=50/c.h;
+      $("#middle_img").css({
+        width:Math.round(rx*boundx)+"px",
+        height:Math.round(ry*boundy)+"px",
+        marginLeft:"-"+Math.round(rx*c.x)+"px",
+        marginTop:"-"+Math.round(ry*c.y)+"px"
+      });
+      var rx=30/c.w;
+      var ry=30/c.h;
+      $("#small_img").css({
+        width:Math.round(rx*boundx)+"px",
+        height:Math.round(ry*boundy)+"px",
+        marginLeft:"-"+Math.round(rx*c.x)+"px",
+        marginTop:"-"+Math.round(ry*c.y)+"px"
+      });
+    };
+  }
+  function updateCoords(c){
+    var width = $('#src').width();
+    var ratio = ret_width/width;
+    c.x = parseInt(ratio*c.x);
+    c.y = parseInt(ratio*c.y);
+    c.w = parseInt(ratio*c.w);
+    c.h = parseInt(ratio*c.h);
+    $("#coords").html(''+c.x+','+c.y+','+c.w+','+c.h);
+  }
+  $("#fileupload").change(function(){ 
+    $("#avatarForm").ajaxSubmit({ 
+      dataType:  'json', 
+      beforeSend: function() { 
+        $('#showsrc').empty();
+        submit_field.hide();
+        var percentVal = '0%'; 
+        bar.width(percentVal); 
+        percent.html(percentVal); 
+        progress.show();
+      }, 
+      uploadProgress: function(event, position, total, percentComplete) { 
+        var percentVal = percentComplete + '%'; 
+        bar.width(percentVal); 
+        percent.html(percentVal); 
+      }, 
+      success: function(data) {
+        progress.hide();
+        if(0 == data.status){
+          submit_field.hide();
+          alert(data.info);
+        }
+        submit_field.show();
+        ret_width = data.width;
+        ret_height = data.height;
+        $('#src_img').html('<img id="src" src="'+data.url+'">');
+        $('#large_img').attr('src',data.url);
+        $('#middle_img').attr('src',data.url);
+        $('#small_img').attr('src',data.url);
+        $("#src").Jcrop({
+          onSelect:updateCoords,
+          onChange:updatePreview,
+          setSelect:[0, 0, 100,100],
+          aspectRatio:1/1,
+        },function(){
+          var bounds=this.getBounds();
+          boundx=bounds[0];
+          boundy=bounds[1];
+          jcrop_api=this;
+        });
+      }, 
+      error:function(xhr){ 
+        bar.width('0'); 
+      } 
+    }); 
+  }); 
+  $('#submit_coords').click(function(){
+    if($('#coords').html()=='0,0,0,0')
+      return false;
+    $('#submit_coords').button('loading');
+    $.ajax({
+      type:"GET",
+      url:'{:U("Setting/cropImage")}'+'/coords/'+$('#coords').html(),
+      success:function(data){
+        data = JSON.parse(data);
+        $('#large_div').html('<img id="large_img" class="jcrop-preview" src="'+data.large_img+'">');
+        $('#middle_div').html('<img id="middle_img" class="jcrop-preview" src="'+data.middle_img+'">');
+        $('#small_div').html('<img id="small_img" class="jcrop-preview" src="'+data.small_img+'">');
+        $('#submit_coords').button('reset');
+        $('#src_img').html('');
+        submit_field.hide();
+        alert('修改成功');
+      },
+      error:function(data){
+        alert(data);
+        submit_field.hide();
+      }});
+  });
+}); 
+</script>
+</block>

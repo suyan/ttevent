@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>ttevent-login</title>
+	<meta name="author" content="weilu544@gmail.com">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	
+	<link rel="stylesheet" type="text/css" href="lib/css/jq.ui1.css" title="default"/>
+	<script type="text/javascript" charset="utf-8" src="lib/jq.mobi.js"></script>
+	<script src="lib/tt.core.js"></script>
+	<script src="lib/base64.js"></script>
+	<script src="lib/tt.js"></script>
+</head>
+<body>
+	<div id="JQUi">
+	<header>
+		<img src="images/title.png" id="logo" style="width: 100%;max-height: 400px"/>
+	</header>
+	<center>
+	<form>
+		<label for="email" >邮箱:</label>
+		<br/>
+		<input type="text" id="email" class="jq-ui-forms" placeholder="Email@ttevent.com" />
+		<br/>
+		<label for="password">密码:</label>
+		<br/>
+		<span><input type="password" id="password" class='jq-ui-forms' /></span>	
+		<br>
+		<a class="button" id="login_button" style="width: 120px" onclick="login()" >登陆</a>
+		<a class="button" id="register_button" style="width: 120px" onClick="change_page('register')">注册</a>
+	</form>
+	</center>
+	</div>
+<script type="text/javascript">
+
+function loaded() 
+{
+	// 如果本地存有用户名和密码，自动登录
+	if( kget('u_email') !=null && kget('u_password') !=null  )
+	{
+		$('#email').val( kget('u_email') );
+		$('#password').val( kget('u_password') );
+		login();
+	}
+}
+document.addEventListener('DOMContentLoaded', loaded, false);
+</script>
+</body>
+</html>

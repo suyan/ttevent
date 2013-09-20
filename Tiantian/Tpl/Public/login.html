@@ -1,0 +1,130 @@
+<extend name="Public:base" />
+<block name="css">
+<style type="text/css">
+.box{
+    float: right;
+    box-shadow: 0 0 5px 0 rgb(238, 238, 238);
+    background: white;
+    border:1px solid #DFDFDF;
+    border-radius: 5px;
+    width: 90%;
+    padding: 35px 0 30px;
+    margin-bottom:30px;
+}
+</style>
+</block>
+<block name="header">
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="{:U('Public/index')}">{:C('SITE_NAME')}</a>
+      <ul class="nav">
+        <li id="login"><a href="javascript:;">随时随地参与活动</a><li>
+      </ul>
+      <ul class="nav pull-right">
+        <li><a href="{:U('Public/login')}#register">注册</a></li>
+        <li><a href="{:U('Public/login')}">登录</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</block>
+<block name="body">
+  <header class="jumbotron" id="overview">
+    <div class="container">
+      <br><br><br> 
+      <h1 class="text-center" style="color:white;">登录到{:C('SITE_NAME')}</h1>
+      <p class="lead text-center" style="color:white;">随时随地参与和管理活动</p>
+      <div class="row">
+        <div class="span10 offset2">
+          <form action="{:U('Public/checkLogin')}" id="loginForm" class="form-inline" method="POST">
+            <div class="control-group inline">
+              <input type="text" name="email" class='span4' placeholder="邮箱" style="height:30px;">
+            </div>
+            <div class="control-group inline">
+              <input type="password" name="password" class='span4' placeholder="密码" style="height:30px;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-large">登录</button>
+          </form>    
+        </div>
+        <div class="span10 offset2">
+          <p style="color:white;">还没有帐号？<a href="#register">注册</a></p>
+        </div>
+      </div>
+      <br><br><br>
+    </div>
+  </header>
+<div class="container">
+  <div class="span12">
+    <div class="row">
+      <br><br><br> 
+      <div class="span12">
+        <legend id="register">注册</legend>
+      </div>
+      <div class="span6">
+      </div>
+      <div class="span6">
+        <div class="box text-center">
+          <form action="{:U('Public/addUser')}" id="registerForm" class="form-horizontal" method="POST">
+            <div class="control-group"><input type="text" name="email" class='span4' placeholder="邮箱" style="height:30px;"></div>
+            <div class="control-group"><input type="password" id="registerPassword" name="password" class='span4' placeholder="密码" style="height:30px;"></div>
+            <div class="control-group"><input type="password" name="confirm_password" class='span4' placeholder="确认密码" style="height:30px;"></div>
+            <div class="control-group"><input type="text" name="nickname" class='span4' placeholder="昵称" style="height:30px;"></div>
+            <p>已有帐号？<a href="#login">登录</a></p>
+            <p><button type="submit" class="btn btn-primary btn-large" data-loading-text="注册中...">注册</button></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/messages_zh.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.bootstrap.js"></script>
+<script>
+$(document).ready(function(){
+  var submit;
+  var options = {
+    beforeSubmit:validateForm,
+    success:showResponse,
+    clearForm:false
+  }
+  function validateForm(formData,jqForm,options){
+    submit.button('loading');
+    return true;
+  }
+  function showResponse(ret,statusText){
+    submit.button('reset');
+    if(ret.status==0){
+      $('.notifications').notify({message: { text:ret.info }}).show();
+    }else{
+      $('.notifications').notify({message: { text:ret.info }}).show();
+      setTimeout(function(){history.go(0);},2000);
+    }
+  }
+  //增加表单验证
+  $("#registerForm").validate({
+    rules:{
+      email:{required:true,email:true,remote:"<?php echo U('Public/checkEmail'); ?>"},password:{required:true,minlength:6},confirm_password:{required:true,minlength:6,equalTo:"#registerPassword"},nickname:{required:true,minlength:2},
+    },
+    messages:{
+      email:{required:"请输入邮箱",email:"请输入正确的邮箱",remote:"邮箱已存在"},password:{required:"请输入密码",minlength:"密码最短为六位"},confirm_password:{required:"请输入密码",minlength:"密码最短为六位",equalTo:"密码输入不一致"},nickname:{required:"请输入昵称",minlength:"昵称最少为两个字"},    
+    },
+    submitHandler:function(form) {
+      submit = $(form).find('button');
+      $(form).ajaxSubmit(options);
+  }});
+  $('#loginForm').validate({
+      rules:{email:{required:true,email:true},password:{required:true,minlength:6}},
+      messages:{email:{required:"请输入邮箱",email:"请输入正确的邮箱"},password:{required:"请输入密码",minlength:"密码最短为六位"}},
+      submitHandler:function(form) {
+        submit = $(form).find('button');
+        $(form).ajaxSubmit(options);
+    }
+  });
+});
+</script>
+</block>

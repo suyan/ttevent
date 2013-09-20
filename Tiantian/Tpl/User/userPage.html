@@ -1,0 +1,107 @@
+<extend name="User:base" />
+<block name="nav_list">
+</block>
+<block name="main">
+<div class="span2">
+  <img class="large_avatar" src="{$user['middle_img']}" alt="">
+  <h3 class="center">{$user['nickname']}</h3>
+  <table class="table">
+    <tr><td>创建</td><td>参加</td><td>关注</td></tr>
+    <tr><td>{$user.event_count}</td><td>{$user.event_join}</td><td>{$user.event_follow}</td></tr>
+  </table>
+  <if condition="$enable_follow">
+    <div class="well well-small">
+      <div id="show_follow" class="text-center">
+        <if condition="!$user['is_followed']">
+          <a id="follow_user" class="btn btn-primary btn-block" href="{:U('UserFollow/followUser')}/id/{$user['id']}"><i class="icon-star-empty icon-white"></i>关注({$user['follow_count']})</a>
+        <else/>
+          <div class="btn-group btn-block">
+            <a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-star icon-white"></i>已关注({$user['follow_count']})<span class="caret"></span></a>  
+            <ul class="dropdown-menu">
+              <li class="text-left"><a id="unfollow_user" href="{:U('UserFollow/unfollowUser')}/id/{$user['id']}">取消关注</a></li>
+            </ul>
+          </div>
+        </if>
+      </div>
+    </div>
+  </if>
+</div>
+<div class="span7">
+  <div>
+    <ul id="myTab" class="nav nav-tabs">
+      <li><a href="#showJoinEvent" data-toggle="tab">Ta参与的活动</a></li>
+      <li><a href="#showFollowEvent" data-toggle="tab">Ta关注的活动</a></li>
+      <li class="active"><a href="#showManageEvent" data-toggle="tab">Ta管理的活动</a></li>
+    </ul>
+  </div>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade" id="showJoinEvent"></div>
+    <div class="tab-pane fade" id="showFollowEvent"></div>
+    <div class="tab-pane fade in active" id="showManageEvent"></div>
+  </div>
+</div>
+<div class="span3">
+</div>
+</block>
+<block name="js">
+<script type="text/javascript">
+function getEventData(id){
+  $('#'+id).html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+  $.ajax({
+    type:"GET",
+    url:'{:U("Event/'+id+'")}'+'/user_id/{$user.id}',
+    success:function(data){
+      $('#'+id).html(data);
+    },
+    error:function(data){
+      $('#'+id).html("获取超时");
+    }});
+}
+
+function reGetEventData(href){
+  $('#myTabContent .active').html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+  $.ajax({
+    type:"GET",
+    url:href,
+    success:function(data){
+      $('#myTabContent .active').html(data);
+    },
+    error:function(data){
+      $('#myTabContent .active').html('获取超时');
+    }}); 
+}
+
+$(function(){
+  getEventData('showManageEvent');
+  $('#myTab a').click(function(e){
+    e.preventDefault();
+    if($($(this).attr('href')).html() == ''){
+      getEventData($(this).attr('href').substr(1));
+      $(this).tab('show');  
+    }
+  });
+  $('.pagination a').live('click',function(event){
+    event.preventDefault();
+    reGetEventData($(this).attr('href'));
+  });
+  $('#follow_user').live('click',function(e){
+    event.preventDefault();
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        alert(data.info);
+      else
+        $('#show_follow').html('<div class="btn-group btn-block"><a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-star icon-white"></i>已关注({$user["follow_count"]+1})<span class="caret"></span></a>  <ul class="dropdown-menu"><li class="text-left"><a id="unfollow_user" href="{:U("UserFollow/unfollowUser")}/id/{$user["id"]}">取消关注</a></li></ul></div>');
+    });
+  });
+  $('#unfollow_user').live('click',function(e){
+    event.preventDefault();
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        alert(data.info);
+      else  
+        $('#show_follow').html('<a id="follow_user" class="btn btn-primary btn-block" href="{:U("UserFollow/followUser")}/id/{$user['id']}"><i class="icon-star-empty icon-white"></i>关注({$user["follow_count"]})</a>');
+    });
+  });
+});
+</script>
+</block>

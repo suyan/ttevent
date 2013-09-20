@@ -1,0 +1,18 @@
+<extend name="EventManage:base" />
+<block name="main">
+<div class="span10">
+  <table class="table table-bordered">
+    <thead>
+      <tr><td>序号</td><td>昵称</td><td>邮箱</td><td>身份</td></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>{$event['user']['nickname']}</td><td>{$event['user']['email']}</td><td>管理员</td></tr>
+    </tbody>
+  </table>
+</div>
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript">
+</script>
+</block>

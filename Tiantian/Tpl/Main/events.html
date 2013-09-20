@@ -1,0 +1,85 @@
+<extend name="Main:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="body">
+<div class="container">
+  <div class="span12">
+    <div class="row">
+      <br>
+      <ul class="breadcrumb">
+        <li><a href="{:U('Public/index')}">首页</a> <span class="divider">/</span></li>
+        <li class="active">全部活动</li>
+      </ul>
+      <div class="row">
+        <div class="span2">
+          <ul class="well nav nav-list" id='category'>
+            <li class="nav-header">活动分类</li>
+            <volist name="categories" id="category">
+              <if condition="($category['id'] eq $category_id)  AND ($category['parent_id'] eq 0)">
+                <li class="active"><a href="javascript:;" name="{$category['id']}">{$category['name']}({$category['count']})</a></li>
+              <elseif condition="($category['parent_id'] eq 0)" />
+                <li><a href="javascript:;" name="{$category['id']}">{$category['name']}({$category['count']})</a></li>
+              </if>
+            </volist>
+          </ul>
+        </div>
+        <div class="span10">
+          <div class="row">
+            <div class="span7">
+              <div class="btn-group">
+                <button class="btn btn-primary" id="show_time" name="{$time}">时间</button>
+                <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                <ul class="dropdown-menu" id="time">
+                  <li><a href="javascript:;" name="all">全部</a></li>
+                  <li><a href="javascript:;" name="today">今天</a></li>
+                  <li><a href="javascript:;" name="tomorrow">明天</a></li>
+                  <li><a href="javascript:;" name="week">最近一周</a></li>
+                </ul>
+              </div>
+              <hr>
+              {:W("Event",$data)}
+            </div>
+            <div class="span3"></div>
+          </div>  
+        </div>
+      </div>
+    </div>  
+  </div>
+</div> 
+</block>
+<block name="js">
+<script>
+  var url='__APP__/Main/events';
+  function gotourl(){
+    var category_id = $('#category li[class=active] a').attr('name');
+    if(category_id)
+      url += '/category_id/'+category_id;
+    var time = $('#show_time').attr('name');
+    if(time)
+      url += '/time/'+time;
+    window.location.href = url;
+  }
+  //设置时间显示
+  show_time = $('#show_time').attr('name');
+  if(show_time)
+    $('#show_time').html($('#time a[name='+show_time+']').html());
+  $(function(){
+    $("#category a").click(function(e){
+      e.preventDefault();
+      var category = $(this);
+      $('#category li[class=active]').removeClass('active');
+      category.parent('li').addClass('active');
+      gotourl();
+    });
+    $('#time a').click(function(e){
+      e.preventDefault();
+      var time = $(this);
+      $('#show_time').attr('name',time.attr('name'));
+      $('#show_time').html(time.html());
+      gotourl();
+    });
+  });
+</script>
+</block>

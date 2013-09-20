@@ -1,0 +1,92 @@
+<div id="myModal" class="modal hide">
+  <form id="page_form" class="form-horizontal" action="{:U('Page/insert')}" method="post">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">增加书签</h3>
+    </div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="name">名称</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="输入网站名称">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="url">地址</label>
+        <div class="controls">
+          <input type="text" name="url" id="url" placeholder="输入网站的地址">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">描述</label>
+        <div class="controls">
+          <input type="text" name="description" id="description" placeholder="请输入对网站的描述">
+        </div>
+      </div>
+      <input type="hidden" name="category_id" id="category_id" value="">
+      <center><img src="Public/img/loading.gif" class="hide"></center>
+      <div class="alert hide"></div>
+    </div>
+    <div class="modal-footer">
+      <button id="page_submit" class="btn btn-primary">保存</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+  </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var form = null;
+  var options = {
+    beforeSubmit:validateForm,
+    success:showResponse,
+    clearForm:false
+  }
+  var loading = $("#page_form img");
+  function validateForm(formData,jqForm,options){
+    form = formData;
+    loading.removeClass("hide");
+    return true;
+  }
+  function showResponse(ret,statusText){
+    loading.addClass("hide");
+    if(ret.status==0){
+      $('#page_form .alert').show().html(ret.info);
+    }else{
+      $('#page_form .alert').show().html(ret.info);
+      $('#myModal').modal('hide');
+      //刷新页面
+      history.go(0);
+    }
+  }
+  //关闭窗口移除代码
+  $('#myModal').on('hidden',function(){
+    $('#myModal').remove();
+  });
+  //增加分类
+  $('#category_id').val($('.active[category-id]').attr('category-id'));
+  //增加表单验证
+  $("#page_form").validate({
+    rules:{
+      name:{
+        required:true
+      },
+      url:{
+        required:true,
+        url:true
+      },
+    },
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element) {
+      element.text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+    },
+    submitHandler:function(form) {
+      $(form).ajaxSubmit(options);
+  }});
+  $('#myModal').modal('show');
+});
+</script>
+

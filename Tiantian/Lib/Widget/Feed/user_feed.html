@@ -1,0 +1,20 @@
+<if condition="empty($feeds)" >
+<else />
+<foreach name="feeds" item="feed">
+  <li class="media" id="{$feed['id']}">
+    <switch name="feed.type">
+      <case value="1">
+        <a class="pull-left" href="{:U('User/userPage',array('id'=>$feed['user']['id']))}">
+          <img class="media-object" style="width:50px;height:50px;" src="{$feed['user']['middle_img']}">
+        </a>
+        <div class="media-body">
+          <div class=" well well-small">
+            <div><a href="{:U('User/userPage',array('id'=>$feed['user']['id']))}">{$feed['user']['nickname']}</a>对活动<a href="{:U('Main/event',array('id'=>$feed['event_id']))}">{$feed['event']['name']}</a>进行了更新</div>
+            <div class="text-right">{$feed['create_time']}</div>
+          </div>
+        </div>
+      </case>
+    </switch>
+  </li>
+</foreach>
+</if>

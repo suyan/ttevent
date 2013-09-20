@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>{"url":"http://localhost/ttevent/1/Public/image/51b0879d5f9a2_middle.jpg"}

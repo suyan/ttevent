@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>活动中国电影资料馆6月周末放映：佳片放送抓取完成<br>

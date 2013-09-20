@@ -1,0 +1,171 @@
+<extend name="EventCreate:base" />
+<block name="css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/jquery.Jcrop.css">
+</block>
+<block name="main">
+<div class="span10">
+  <div class="alert alert-error hide">
+    <button type="button" class="close">&times;</button>
+    <div id="error_info"></div>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" id="posterForm" action="{:U('EventCreate/uploadImage',array('id'=>$id))}" method="POST">
+      <div class="control-group">
+        <label class="control-label" for="pic">*活动海报</label>
+        <div class="controls">
+          <p class="text-info">最好选择长宽比为3：2的图片上传</p>
+          <input type="file" name="pic" id="fileupload">
+          <div class="progress hide">
+            <div class="bar"><div class="precent"></div></div>
+          </div>
+          <div class="row">
+            <div id="src_img" class="span6 hide">
+              <img id="src" src="">
+            </div>
+            <div id="preview_img" class="span1 hide" style="width: 100px;height: 150px;overflow: hidden;">
+              <img id="preview" src="" class="jcrop-preview"/>
+            </div>
+            <div id="submit_field" class="span6 hide">
+              <a id="submit_coords" class="btn btn-primary" href="javascript:;" data-loading-text="裁剪中...">确认裁剪</a>
+              请在上图中选择适当的大小，根据右侧确定最终封面
+            </div>
+          </div>
+          <div id="coords" class="hide"></div>
+          <if condition="isset($poster)">
+            <div id="ret_img">
+              <img id="preview" class="jcrop-preview" src="{$poster}">
+            </div>
+          <else />
+            <div id="ret_img" class="hide"></div>
+          </if>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a id="next" class="btn btn-primary">下一步</a>
+        <a id="skip" class="btn">跳过</a>
+      </div>
+    </form><!-- 图片上传部分 -->
+  </div>
+</div>
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.Jcrop.js"></script>
+<script type="text/javascript">
+$(function () { 
+  //裁剪部分
+  var ret_width,ret_height;
+  var bar = $('.bar'); 
+  var percent = $('.precent'); 
+  var progress = $(".progress");
+  var jcrop_api,boundx,boundy;
+  function updatePreview(c){
+    if(parseInt(c.w)>0){
+      var rx=100/c.w;
+      var ry=150/c.h;
+      $("#preview").css({
+        width:Math.round(rx*boundx)+"px",
+        height:Math.round(ry*boundy)+"px",
+        marginLeft:"-"+Math.round(rx*c.x)+"px",
+        marginTop:"-"+Math.round(ry*c.y)+"px"
+      });
+    };
+  }
+  function updateCoords(c){
+    var width = $('#src').width();
+    var ratio = ret_width/width;
+    c.x = parseInt(ratio*c.x);
+    c.y = parseInt(ratio*c.y);
+    c.w = parseInt(ratio*c.w);
+    c.h = parseInt(ratio*c.h);
+    $("#coords").html(''+c.x+','+c.y+','+c.w+','+c.h);
+  }
+  function hideImgField(){
+    $('#src_img').hide();
+    $('#preview_img').hide();
+    $('#submit_field').hide();
+  }
+  function showImgField(){
+    $('#src_img').show();
+    $('#preview_img').show();
+    $('#submit_field').show();
+  }
+  $("#fileupload").change(function(){ 
+    $('#submit_field').hide();
+    $('#ret_img').hide();
+    $('#src_img').html('');
+    $('#preview_img').html('');
+    showImgField();
+    $("#posterForm").ajaxSubmit({ 
+      dataType:  'json', 
+      beforeSend: function() { 
+        $('#showsrc').empty();
+        var percentVal = '0%'; 
+        bar.width(percentVal); 
+        percent.html(percentVal); 
+        progress.show();
+      }, 
+      uploadProgress: function(event, position, total, percentComplete) { 
+        var percentVal = percentComplete + '%'; 
+        bar.width(percentVal); 
+        percent.html(percentVal); 
+      }, 
+      success: function(data) {
+        if(0 == data.status){
+          alert(data.info);
+        }
+        ret_width = data.width;
+        ret_height = data.height;
+        progress.hide();
+        $('#src_img').html('<img id="src" src="'+data.url+'">');
+        $('#preview_img').html('<img id="preview" class="jcrop-preview" src="'+data.url+'">');
+        $('#submit_field').show();
+        $("#src").Jcrop({
+          onSelect:updateCoords,
+          onChange:updatePreview,
+          setSelect:[0, 0, 100,150],
+          aspectRatio:2/3,
+        },function(){
+          var bounds=this.getBounds();
+          boundx=bounds[0];
+          boundy=bounds[1];
+          jcrop_api=this;
+        });
+      }, 
+      error:function(xhr){ 
+        bar.width('0'); 
+      } 
+    }); 
+  }); 
+  $('#submit_coords').click(function(){
+    $('#submit_coords').button('loading');
+    $.ajax({
+      type:"GET",
+      url:'{:U("EventCreate/cropImage",array("id"=>$id))}'+'/coords/'+$('#coords').html(),
+      success:function(data){
+        data = JSON.parse(data);
+        $('#ret_img').html('<img id="src" src="'+data.url+'" style="width:200px;height:300px;">');
+        $('#submit_coords').button('reset');
+        hideImgField();
+        $('#ret_img').show();
+      },
+      error:function(data){
+        alert(data);
+      }});
+  });
+  $('.alert .close').live("click", function(e) {
+      $(this).parent().hide();
+  });
+  $('#skip').click(function(){
+    window.location.href = '{:U("EventCreate/offlineEventFinish",array("id"=>$id))}';
+  });
+  $('#next').click(function(){
+    if(!$('#preview_img').html()){
+      $('#error_info').html('请上传图片并选择生成缩略图').parent('div').show();
+    }else{
+      window.location.href = '{:U("EventCreate/offlineEventFinish",array("id"=>$id))}';
+    }
+  });
+}); 
+</script>
+</block>

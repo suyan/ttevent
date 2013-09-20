@@ -1,0 +1,38 @@
+<extend name="Public:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="header">
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="{:U('Public/index')}">天天测试</a>
+    </div>
+  </div>
+</div>
+</block>
+<block name="body">
+<div class="container">
+  <br>
+  <div class="span12">
+    <p class="well" id="aaa">
+    </p>
+  </div>
+</div> 
+</block>
+<block name="js">
+  <script type="text/javascript" src="__PUBLIC__/js/base64.js"></script>
+  <script>
+    var email = 'test1@test.com';
+    var password = '123qwe';
+    var key = Base64.encode(email+':'+password);
+    $.post(
+      'http://localhost/ttevent/1/api.php/Public/login',
+      {'key':key},
+      function(ret){
+        $('#aaa').html(JSON.stringify(ret));
+      });
+  </script>
+</block>
+<block name="footer"></block>

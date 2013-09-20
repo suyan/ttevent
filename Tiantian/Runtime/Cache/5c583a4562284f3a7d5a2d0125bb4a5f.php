@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>第1页抓取完成<br>

@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>活动孟京辉话剧【活着】2013全国巡演抓取完成<br>

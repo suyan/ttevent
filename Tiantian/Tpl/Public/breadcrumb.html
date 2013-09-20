@@ -1,0 +1,11 @@
+<ul class="breadcrumb">
+  <foreach name="bread" item="item">
+    <li>
+      <if condition="$item[2]">
+        {$item[0]}
+      <else />
+        <a href="{$item[1]}">{$item[0]}</a><span class="divider">/</span>
+      </if>
+    </li>
+  </foreach>
+</ul><!-- 上部提示 -->

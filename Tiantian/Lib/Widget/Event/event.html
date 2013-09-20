@@ -1,0 +1,30 @@
+<if condition="empty($events)" >
+  <div class="center">{$error}</div>
+<else />
+  <ul class="media-list">
+    <foreach name="events" item="event">
+      <li class="media">
+        <a class="pull-left" href="{$event['url']}">
+          <if condition="$event['small_img']">
+            <img src="{$event['small_img']}" style="height:120px;width:90px">
+          <else />
+            <img src="" style="height:120px;width:90px">
+          </if>
+        </a>
+        <div class="media-body">
+          <h4 class="media-heading"><a href="{$event['url']}">{$event['name']}</a></h4>
+            {$event['show_status']}
+            <div>
+              <small><strong>时间：</strong>{$event['start_time']} —— {$event['end_time']}</small><br>
+              <small><strong>地点：</strong>{$event['province']} {$event['city']} {$event['area']} {$event['location']}</small><br>
+              <small><strong>发起：</strong>{$event['user']['nickname']}</small><br>
+              <small><strong>描述：</strong>{$event['short_description']}</small>
+            </div>
+        </div>
+      </li>  
+    </foreach>
+  </ul>
+  <div class="pagination pagination-centered">
+    {$page}
+  </div>
+</if>

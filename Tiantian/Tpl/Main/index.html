@@ -1,0 +1,170 @@
+<extend name="Main:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="body">
+<div class="container">
+  <div class="row">
+    <br>
+    <div class="span12">
+      <div class="row">
+        <div class="span9">
+          <legend>
+            正在进行/即将进行
+            <ul class="nav nav-pills pull-right">
+              <li><a class="pull-right" href="#myCarousel" data-slide="prev"><i class="icon-chevron-left"></i></a></li>
+              <li><a class="pull-right" href="#myCarousel" data-slide="next"><i class="icon-chevron-right"></i></a></li>
+            </ul>
+          </legend>
+          <div id="myCarousel" class="carousel slide" >
+            <div class="carousel-inner">
+              <present name="events[0]">
+                <div class="item active">
+                  <ul class="thumbnails">
+                    <volist name="events" id="event" offset="0" length='3'>
+                      <li class="span3">
+                        <a href="{$event['url']}" class="thumbnail" title="{$event['name']}">
+                          <img src="{$event['middle_img']}" alt="{$event['name']}" style="width:100%">
+                          <div class="center" style="word-break:break-all"><h5>{$event['short_name']}</h5></div>
+                        </a>
+                      </li>
+                    </volist>
+                  </ul>
+                </div>
+              </present>
+              <present name="events[3]">
+                <div class="item">
+                  <ul class="thumbnails">
+                    <volist name="events" id="event" offset="3" length='3'>
+                      <li class="span3">
+                        <a href="{$event['url']}" class="thumbnail" title="{$event['name']}">
+                          <img src="{$event['middle_img']}" alt="{$event['name']}" style="width:100%">
+                          <div class="center" style="word-break:break-all"><h5>{$event['short_name']}</h5></div>
+                        </a>
+                      </li>
+                    </volist>
+                  </ul>
+                </div>
+              </present>
+              <present name="events[6]">
+                <div class="item">
+                  <ul class="thumbnails">
+                    <volist name="events" id="event" offset="6" length='3'>
+                      <li class="span3">
+                        <a href="{$event['url']}" class="thumbnail" title="{$event['name']}">
+                          <img src="{$event['middle_img']}" alt="{$event['name']}" style="width:100%">
+                          <div class="center" style="word-break:break-all"><h5>{$event['short_name']}</h5></div>
+                        </a>
+                      </li>
+                    </volist>
+                  </ul>
+                </div>
+              </present>
+            </div>
+          </div>
+          <legend>
+            热门推荐
+            <ul class="nav nav-pills pull-right">
+              <li><a href="{:U('Main/events')}"><small>更多>></small></a></li>
+            </ul>
+          </legend>
+          <div class="row">
+            <div class="span9">
+              <div class="row">
+                <div class="tabbable tabs-left span1">
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab1" data-toggle="tab" style="min-width: 35px;">全部</a></li>
+                  </ul>  
+                </div>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tab1">
+                    <div class="span4">
+                      <table class="table table-condensed">
+                        <volist name="hotest_events" id="event" offset="0" length="2">
+                          <tr>
+                            <td style="width:100px;"><a href="{$event['url']}" title="{$event['name']}">
+                                  <img class="media-object" src="{$event['middle_img']}" style="width:80px;height:120px;">
+                                </a></td>
+                            <td>
+                              <h5 class="media-heading"><a href="{$event['url']}" title="{$event['name']}">{$event['short_name']}</a></h5>
+                              <div>
+                                <small><strong>时间：</strong>{$event['time']}</small><br>
+                                <small><strong>地点：</strong>{$event['location']}</small><br>
+                                <small><strong>发起：</strong>{$event['user']['nickname']}</small>
+                                <p class="text-right"><small><strong>{$event['join_count']}</strong>人参加 <strong>{$event['follow_count']}</strong>人关注</small></p>
+                              </div>
+                            </td>
+                          </tr>  
+                        </volist>
+                      </table>  
+                    </div> 
+                    <div class="span4">
+                      <table class="table table-condensed">
+                        <volist name="hotest_events" id="event" offset="2" length="2">
+                          <tr>
+                            <td style="width:100px;"><a href="{$event['url']}" title="{$event['name']}">
+                                  <img class="media-object" src="{$event['middle_img']}" style="width:80px;height:120px;">
+                                </a></td>
+                            <td>
+                              <h5 class="media-heading"><a href="{$event['url']}" title="{$event['name']}">{$event['short_name']}</a></h5>
+                              <div>
+                                <small><strong>时间：</strong>{$event['time']}</small><br>
+                                <small><strong>地点：</strong>{$event['location']}</small><br>
+                                <small><strong>发起：</strong>{$event['user']['nickname']}</small>
+                                <p class="text-right"><small><strong>{$event['join_count']}</strong>人参加 <strong>{$event['follow_count']}</strong>人关注</small></p>
+                              </div>
+                            </td>
+                          </tr>  
+                        </volist>
+                      </table>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="span3">
+          <?php if(session(C('USER_AUTH_KEY'))): ?>
+              <a class="btn btn-large btn-primary btn-block" href="{:U('EventCreate/eventType')}">发起活动</a>
+          <?php endif; ?>
+          <h4>热门举办方</h4>
+          <div class="row">
+            <div class="span3">
+              <table class="table table-condensed">
+                <foreach name="hotest_creater" item="user">
+                  <tr>
+                    <td style="width:50px;"><a href="{:U('User/userPage',array('id'=>$user['id']))}"><img class="middle_avatar" src="{$user['middle_img']}"></a></td>
+                    <td>
+                      <h4 class="media-heading"><a href="{:U('User/userPage',array('id'=>$user['id']))}">{$user['short_nickname']}</a></h4>
+                      <div>举办：{$user['event_count']}</div>
+                    </td>
+                  </tr>  
+                </foreach>  
+              </table>
+            </div>
+          </div>
+          <h4>热门用户</h4>
+          <div class="row">
+            <div class="span3">
+              <table class="table table-condensed">
+                <foreach name="hotest_follower" item="user">
+                  <tr>
+                    <td style="width:50px;"><a href="{:U('User/userPage',array('id'=>$user['id']))}"><img class="middle_avatar" src="{$user['middle_img']}"></a></td>
+                    <td>
+                      <h4 class="media-heading"><a href="{:U('User/userPage',array('id'=>$user['id']))}">{$user['short_nickname']}</a></h4>
+                      <div>关注：{$user['event_follow']}</div>
+                      <div>参加：{$user['event_join']}</div>
+                    </td>
+                  </tr>  
+                </foreach>  
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</block>

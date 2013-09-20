@@ -1,0 +1,135 @@
+<div id="{$modal_id}" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>{$modal_title}</h3>
+  </div>
+  <form id="{$form_id}" class="form-horizontal" action="{$action_url}" method="post">
+    <div class="modal-body">
+      <foreach name="inputs" item="input">
+        <switch name="input['type']" >
+          <case value="radio">
+            <div class="control-group">
+              <label class="control-label">{$input['name']}</label>
+              <div class="controls ">
+                <foreach name="input['radios']" item="value">
+                  <label class="radio {$input['inline']}">
+                    <input type="radio" name="{$input['id']}" value="{$value[0]}" {$value['2']?'checked':''}>{$value[1]}
+                  </label>
+                </foreach>
+              </div>
+            </div>
+          </case>
+          <case value="select">
+            <div class="control-group">
+              <label class="control-label">{$input['name']}</label>
+              <div class="controls">
+                <select name="{$input['id']}" class="required">
+                  <option></option>
+                  <foreach name="input['selects']" item="value">
+                    <option value="{$key}">{$value}</option>
+                    </label>
+                  </foreach>
+                </select>
+              </div>
+            </div>
+          </case>
+          <case value="checkbox">
+            <div class="control-group">
+              <label class="control-label">{$input['name']}</label>
+              <div class="controls ">
+                <foreach name="input['checkboxs']" item="value">
+                  <label class="checkbox">
+                    <input type="checkbox" name="{$input['id']}" value="{$key}">{$value}
+                  </label>
+                </foreach>
+              </div>
+            </div>
+          </case>
+          <case value="textarea">
+            <div class="control-group">
+              <label class="control-label">{$input['name']}</label>
+              <div class="controls">
+                <textarea name="{$input['id']}" id="{$input['id']}" cols="3" placeholder="{$input['placeholder']}">{$input['value']}</textarea>
+              </div>
+            </div>
+          </case>
+          <case value="hidden">
+            <input type="hidden" id="{$input['id']}" name="{$input['id']}" value="{$input['value']}">
+          </case>
+          <default />
+            <div class="control-group">
+              <label class="control-label">{$input['name']}</label>
+              <div class="controls">
+                <input type="{$input['type']}" {$input['disabled']} name="{$input['id']}" id="{$input['id']}" placeholder="{$input['placeholder']}" value="{$input['value']}">
+              </div>
+            </div>
+        </switch>
+      </foreach>
+      <div class="control-group">
+        <div class="controls">
+          <div id="show_alert" class="alert hide"></div>
+          <div id="show_success" class="alert alert-success hide"></div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="modal-footer">
+    <button id="submit" class="btn btn-primary" data-loading-text="{$submit_loading}">{$submit_name}</button>
+  </div>
+</div>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/messages_zh.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.bootstrap.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var form = null;
+  var options = {
+    beforeSubmit:validateForm,
+    success:showResponse,
+    clearForm:false
+  }
+  var submit = $('#submit');
+  function validateForm(formData,jqForm,options){
+    form = formData;
+    submit.button('loading');
+    return true;
+  }
+  function showResponse(ret,statusText){
+    submit.button('reset');
+    if(ret.status==0){
+      {$error}
+    }else{
+      {$success}
+    }
+  }
+  //关闭窗口移除代码
+  $('#{$modal_id}').on('hidden',function(){
+    $('#{$modal_id}').remove();
+  });
+  //增加表单验证
+  $("#{$form_id}").validate({
+    rules:{
+      <foreach name="inputs" item="input">
+        <if condition="$input['rules']">
+          {$key}:{$input['rules']},
+        </if>
+      </foreach>
+    },
+    messages:{
+      <foreach name="inputs" item="input">
+        <if condition="$input['messages']">
+          {$key}:{$input['messages']},
+        </if>
+      </foreach>
+    },
+    submitHandler:function(form) {
+      $('#show_alert').html('').hide();
+      $('#show_success').html('').hide();
+      $(form).ajaxSubmit(options);
+  }});
+  submit.click(function(){ $('#{$form_id}').submit()});
+  $('#{$modal_id}').modal('show');
+});
+</script>
+

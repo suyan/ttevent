@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>第0页开始抓抓取<br>

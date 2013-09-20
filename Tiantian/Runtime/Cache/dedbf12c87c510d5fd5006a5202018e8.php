@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>{"name":"51b0879d5f9a2","file_name":"51b0879d5f9a2.JPG","file_dir":"image","url":"http://localhost/ttevent/1/Public/image/51b0879d5f9a2.JPG","size":3153132,"type":"jpeg","height":3000,"width":4000,"create_time":1370523549,"status":1,"id":27}

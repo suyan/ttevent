@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>活动中国电影资料馆6月学术放映：戛纳之光抓取完成<br>

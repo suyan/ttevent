@@ -1,0 +1,122 @@
+<legend>{$form_title?$form_title:''}</legend>
+<form id="{$form_id}" class="form-horizontal" action="{$action_url}" method="post">
+  <foreach name="inputs" item="input">
+    <switch name="input['type']" >
+      <case value="radio">
+        <div class="control-group">
+          <label class="control-label">{:isset($input['name'])?$input['name']:''}</label>
+          <div class="controls ">
+            <foreach name="input['radios']" item="value">
+              <label class="radio {:isset($input['inline'])?$input['inline']:''}">
+                <input type="radio" name="{:isset($input['id'])?$input['id']:''}" value="{:isset($value[0])?$value[0]:0}" {:isset($value['2'])?'checked':''}>{:isset($value[1])?$value[1]:''}
+              </label>
+            </foreach>
+          </div>
+        </div>
+      </case>
+      <case value="select">
+        <div class="control-group">
+          <label class="control-label">{:isset($input['name'])?$input['name']:''}</label>
+          <div class="controls">
+            <select name="{:isset($input['id'])?$input['id']:''}" class="required">
+              <option></option>
+              <foreach name="input['selects']" item="value">
+                <option value="{$key}">{$value}</option>
+                </label>
+              </foreach>
+            </select>
+          </div>
+        </div>
+      </case>
+      <case value="checkbox">
+        <div class="control-group">
+          <label class="control-label">{:isset($input['name'])?$input['name']:''}</label>
+          <div class="controls ">
+            <foreach name="input['checkboxs']" item="value">
+              <label class="checkbox">
+                <input type="checkbox" name="{:isset($input['id'])?$input['id']:''}" value="{$key}">{$value}
+              </label>
+            </foreach>
+          </div>
+        </div>
+      </case>
+      <case value="textarea">
+        <div class="control-group">
+          <label class="control-label">{$input['name']}</label>
+          <div class="controls">
+            <textarea name="{:isset($input['id'])?$input['id']:''}" id="{:isset($input['id'])?$input['id']:''}" cols="3" placeholder="{:isset($input['placeholder'])?$input['placeholder']:''}">{:isset($input['value'])?$input['value']:''}</textarea>
+          </div>
+        </div>
+      </case>
+      <case value="hidden">
+        <input type="hidden" id="{$input['id']}" name="{$input['id']}" value="{$input['value']}">
+      </case>
+      <default />
+        <div class="control-group">
+          <label class="control-label">{$input['name']}</label>
+          <div class="controls">
+            <input type="{:isset($input['type'])?$input['type']:''}" {:isset($input['disabled'])?$input['disabled']:''} name="{:isset($input['id'])?$input['id']:''}" id="{:isset($input['id'])?$input['id']:''}" placeholder="{:isset($input['placeholder'])?$input['placeholder']:''}" value="{:isset($input['value'])?$input['value']:''}">
+          </div>
+        </div>
+    </switch>
+  </foreach>
+  <div class="control-group">
+    <div class="controls">
+      <div id="show_alert" class="alert hide"></div>
+      <div id="show_success" class="alert alert-success hide"></div>
+    </div>
+  </div>
+  <div class="form-actions">
+      <button id="submit" class="btn btn-primary" data-loading-text="{$submit_loading}">{$submit_name}</button>
+  </div>
+</form>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/messages_zh.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.validate.bootstrap.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var form = null;
+  var options = {
+    beforeSubmit:validateForm,
+    success:showResponse,
+    clearForm:false
+  }
+  var submit = $("#submit");
+  function validateForm(formData,jqForm,options){
+    form = formData;
+    submit.button('loading');
+    return true;
+  }
+  function showResponse(ret,statusText){
+    submit.button('reset');
+    if(ret.status==0){
+      {$error}
+    }else{
+      {$success}
+    }
+  }
+  //增加表单验证
+  $("#{$form_id}").validate({
+    rules:{
+      <foreach name="inputs" item="input">
+        <if condition="isset($input['rules'])">
+          {$key}:{$input['rules']},
+        </if>
+      </foreach>
+    },
+    messages:{
+      <foreach name="inputs" item="input">
+        <if condition="isset($input['messages'])">
+          {$key}:{$input['messages']},
+        </if>
+      </foreach>
+    },
+    submitHandler:function(form) {
+      $('#show_alert').html('').hide();
+      $('#show_success').html('').hide();
+      $(form).ajaxSubmit(options);
+  }});
+});
+</script>
+

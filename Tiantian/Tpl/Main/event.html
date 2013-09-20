@@ -1,0 +1,180 @@
+<extend name="Main:base" />
+<block name="body">
+<div class="container">
+  <br>
+  <ul class="breadcrumb">
+    <li><a href="{:U('Public/index')}">首页</a> <span class="divider">/</span></li>
+    <li class="active">{$event['name']}</li>
+  </ul><!-- 上部提示 -->
+  <div class="row">
+    <div class="span12">
+      <div class="row">
+        <div class="span2">
+          <div class="row">
+            <img src="{$event['middle_img']}" class="img-polaroid span2">
+          </div>
+          <div class="row">
+            <div class="span2">
+              <small><strong>时间：</strong>{$event['time']}</small><br>
+              <small><strong>地点：</strong>{$event['location']}</small><br>
+              <small><strong>发起：</strong>{$event['user']['nickname']}</small><br>
+              <small><strong>状态：</strong>{$event['show_status']}</small> 
+            </div>
+          </div>
+          <br>
+          <if condition="$user_id">
+            <div class="well well-small">
+              <div id="show_follow" class="text-center">
+                <if condition="!$event['is_followed']">
+                  <a id="follow_event" class="btn btn-primary btn-block" href="{:U('EventFollow/followEvent')}/id/{$event['id']}"><i class="icon-star-empty icon-white"></i>关注({$event['follow_count']})</a>
+                <else/>
+                  <div class="btn-group btn-block">
+                    <a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-star icon-white"></i>已关注({$event['follow_count']})<span class="caret"></span></a>  
+                    <ul class="dropdown-menu">
+                      <li class="text-left"><a id="unfollow_event" href="{:U('EventFollow/unfollowEvent')}/id/{$event['id']}">取消关注</a></li>
+                    </ul>
+                  </div>
+                </if>
+                </div>
+                <div id="show_join" class="text-center">
+                <if condition="!$event['is_joined']">
+                  <a id="join_event" class="btn btn-primary btn-block" href="{:U('EventJoin/joinEvent')}/id/{$event['id']}"><i class="icon-heart-empty icon-white"></i>参加({$event['join_count']})</a>  
+                <else/>
+                  <div class="btn-group btn-block">
+                    <a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-heart icon-white"></i>已参加({$event['join_count']})<span class="caret"></span></a>  
+                    <ul class="dropdown-menu">
+                      <li class="text-left"><a id="unjoin_event" href="{:U('EventJoin/unjoinEvent')}/id/{$event['id']}">取消参加</a></li>
+                    </ul>
+                  </div>
+                </if>
+              </div>
+            </div>
+          </if>
+        </div>
+        <div class="span7">
+          <div class="tabbable"> 
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#eventDescription" data-toggle="tab">活动详情</a></li>
+              <li><a id="getEventFeed" href="#eventFeed" data-toggle="tab">活动动态</a></li>
+              <li><a id="getEventComment" href="#eventComment" data-toggle="tab">活动评论</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="eventDescription">
+                <h4>活动详情</h4>
+                {$event['description']}
+                <h4>日程安排</h4>
+                <if condition="$event['schedule']">
+                  <table class="table">
+                    <tr><th class="span2">时间</th><th>安排</th></tr>
+                    <foreach name="event['schedule']" item="value">
+                      <tr><td>{:date('Y-m-d G:i',$key)}</td><td>{$value}</td></tr>
+                    </foreach>
+                  </table>
+                <else/>
+                  本活动还没有日程安排
+                </if>
+              </div>
+              <div class="tab-pane" id="eventFeed"></div>
+              <div class="tab-pane" id="eventComment"></div>
+            </div>
+          </div>
+        </div>
+        <div class="span3">
+          <h4>活动举办方</h4>
+          <table class="table table-condensed">
+            <tr>
+              <td style="width:50px;"><a href="{:U('User/userPage',array('id'=>$event['user']['id']))}"><img class="media-object middle_avatar" src="{$event['user']['middle_img']}"></a></td>
+              <td>
+                <h4 class="media-heading"><a href="{:U('User/userPage',array('id'=>$event['user']['id']))}">{$event['user']['nickname']}</a></h4>
+                <p>举办：{$event['user']['event_count']}</p>  
+              </td>
+            </tr>  
+          </table>
+          <h4>手机扫描加入</h4>
+          <div class="center">
+            <img src="__PUBLIC__/qrcode/{$event['EventQrcode']['name']}" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</block>
+<block name="js">
+<script type="text/javascript">
+function show_unjoin_event(){
+  $('#show_join').html('<div class="btn-group btn-block"><a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-heart icon-white"></i>已参加({$event["join_count"]+1})<span class="caret"></span></a><ul class="dropdown-menu"><li class="text-left"><a id="unjoin_event" href="{:U("EventJoin/unjoinEvent")}/id/{$event["id"]}">取消参加</a></li></ul></div>');
+}
+$(function(){
+  $('#getEventComment').on('show',function(e){
+    if($('#eventComment').html() == ''){
+      $('#eventComment').html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+      $.get('{:U("EventComment/showEventComments",array("id"=>$event['id']))}',function(data){
+        if(data.status == 0)
+          $('#eventComment').html("<center>请先<a href='{:U('Public/login')}'>登录</a></center>");
+        else  
+          $('#eventComment').html(data);
+      });
+      $(this).tab('show');  
+    }
+  });
+  // $('#getEventComment').tab('show');
+  $('#getEventFeed').on('show',function(e){
+    if($('#eventFeed').html() == ''){
+      $('#eventFeed').html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+      $.get('{:U("EventFeed/feed",array("id"=>$event['id']))}',function(data){
+        if(data.status == 0)
+          $('#eventFeed').html("<center>请先<a href='{:U('Public/login')}'>登录</a></center>");
+        else  
+          $('#eventFeed').html(data);
+      });
+      $(this).tab('show');  
+    }
+  });
+  $('.pagination a').live('click',function(event){
+    event.preventDefault();
+    $('#eventComment').html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        $('#eventComment').html("<center>请先登录</center>");
+      else  
+        $('#eventComment').html(data);
+    });
+  });
+  $('#follow_event').live('click',function(e){
+    event.preventDefault();
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        alert(data.info);
+      else
+        $('#show_follow').html('<div class="btn-group btn-block"><a class="btn btn-success btn-block dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-star icon-white"></i>已关注({$event["follow_count"]+1})<span class="caret"></span></a>  <ul class="dropdown-menu"><li class="text-left"><a id="unfollow_event" href="{:U("EventFollow/unfollowEvent")}/id/{$event["id"]}">取消关注</a></li></ul></div>');
+    });
+  });
+  $('#unfollow_event').live('click',function(e){
+    event.preventDefault();
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        alert(data.info);
+      else  
+        $('#show_follow').html('<a id="follow_event" class="btn btn-primary btn-block" href="{:U("EventFollow/followEvent")}/id/{$event['id']}"><i class="icon-star-empty icon-white"></i>关注({$event["follow_count"]})</a>');
+    });
+  });
+  $('#join_event').live('click',function(e){
+    event.preventDefault();
+    show_pop_box_url("{:U('EventJoin/showUserInfoForm/',array('id'=>$event['id']))}");
+  });
+  $('#unjoin_event').live('click',function(e){
+    event.preventDefault();
+    $.get($(this).attr('href'),function(data){
+      if(data.status == 0)
+        alert(data.info);
+      else  
+        $('#show_join').html('<a id="join_event" class="btn btn-primary btn-block" href="{:U("EventJoin/joinEvent")}/id/{$event["id"]}"><i class="icon-heart-empty icon-white"></i>参加({$event["join_count"]})</a>');
+    });
+  });
+  var status = {$event['status']};
+  if(3 == status)
+    $('#getEventFeed').tab('show');
+});
+</script>
+</block>

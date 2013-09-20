@@ -1,0 +1,51 @@
+<extend name="Main:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="header">
+</block>
+<block name="body">
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <hr>
+      <h1 class="center">{$event['name']}</h1>  
+      <hr>
+    </div>
+    <div class="span4 offset1">
+      <div class="row">
+        <img src="{$event['large_img']}" alt="" class="span4">
+      </div>
+    </div>
+    <div class="span6">
+      <table class="table" style="font-size:20px">
+        <tr>
+          <td class="span1">时间</td><td>{$event['time']}</td>
+        </tr>
+        <tr>
+          <td>地点</td><td>{$event['location']}</td>
+        </tr>
+        <tr>
+          <td>主办</td><td>{$event['user']['nickname']}</td>
+        </tr>
+        <tr>
+          <td>类型</td><td>{$event['category']} {$event['sub_category']}</td>
+        </tr>
+        <tr>
+          <td>简介</td><td>{$event['short_description']}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="span12">
+      <hr>
+      <h2 class="center">立即加入</h2>  
+      <hr>
+      <div class="row">
+        <img src="__PUBLIC__/qrcode/{$event['EventQrcode']['name']}" alt="" class="span4 offset4">
+      </div>
+    </div>
+  </div>
+</div>
+</block>
+<block name="footer"></block>

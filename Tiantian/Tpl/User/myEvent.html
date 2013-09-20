@@ -1,0 +1,65 @@
+<extend name="Event:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="main">
+<div class="span7">
+  <div>
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#showJoinEvent" data-toggle="tab">已参与活动</a></li>
+      <li><a href="#showFollowEvent" data-toggle="tab">已关注活动</a></li>
+      <li><a href="#showManageEvent" data-toggle="tab">管理活动</a></li>
+    </ul>
+  </div>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade in active" id="showJoinEvent"></div>
+    <div class="tab-pane fade" id="showFollowEvent"></div>
+    <div class="tab-pane fade" id="showManageEvent"></div>
+  </div>
+</div>
+</block>
+<block name="js">
+<script type="text/javascript">
+function getEventData(id){
+  $('#'+id).html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+  $.ajax({
+    type:"GET",
+    url:'{:U("Event/'+id+'")}',
+    success:function(data){
+      $('#'+id).html(data);
+    },
+    error:function(data){
+      $('#'+id).html("获取超时");
+    }});
+}
+
+function reGetEventData(href){
+  $('#myTabContent .active').html('<div class="center"><img src="__PUBLIC__/img/loading.gif"></div>');
+  $.ajax({
+    type:"GET",
+    url:href,
+    success:function(data){
+      $('#myTabContent .active').html(data);
+    },
+    error:function(data){
+      $('#myTabContent .active').html('获取超时');
+    }}); 
+}
+
+$(function(){
+  getEventData('showJoinEvent');
+  $('#myTab a').click(function(e){
+    e.preventDefault();
+    if($($(this).attr('href')).html() == ''){
+      getEventData($(this).attr('href').substr(1));
+      $(this).tab('show');  
+    }
+  });
+  $('.pagination a').live('click',function(event){
+    event.preventDefault();
+    reGetEventData($(this).attr('href'));
+  });
+});
+</script>
+</block>

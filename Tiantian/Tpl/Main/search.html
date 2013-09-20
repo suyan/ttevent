@@ -1,0 +1,23 @@
+<extend name="Main:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="body">
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <br>
+      <ul class="breadcrumb">
+        <li><a href="{:U('Public/index')}">首页</a> <span class="divider">/</span></li>
+        <li class="active">查找活动: {$q}</li>
+      </ul>
+      <div class="row">
+        <div class="span10">
+          {:W("Event",$data)}
+        </div>
+      </div>  
+    </div>
+  </div>
+</div> 
+</block>

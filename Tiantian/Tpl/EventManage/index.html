@@ -1,0 +1,91 @@
+<extend name="EventManage:base" />
+<block name="main">
+<div class="span10">
+  <div class="row">
+    <div class="span10">
+      <a class="btn btn-primary" href="{:U('eventManage/modifyEventInfo',array('id'=>$event['id']))}"><i class="icon-edit icon-white"></i>修改活动</a>
+      <a class="btn btn-primary" href="{:U('Main/eventPrint',array('id'=>$event['id']))}"><i class="icon-print icon-white"></i>打印宣传单</a>
+      <button class="btn btn-danger pull-right" id="delete"><i class="icon-remove icon-white"></i>删除活动</button>
+    </div>
+    <div class="span10"><hr></div>
+    <div class="span5">
+      <table class="table table-bordered">
+        <h3 class="text-center">活动参与情况</h3>
+        <thead><tr><th>项目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>关注用户数</td><td>{$event['follow_count']}</td></tr>
+          <tr><td>参与用户数</td><td>{$event['join_count']}</td></tr>
+          <tr><td>活动评论数</td><td>{$event['comment_count']}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="span5">
+      <table class="table table-bordered">
+        <h3  class="text-center">活动时间</h3>
+        <thead><tr><th>项目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>创建时间</td><td>{$event['create_time']}</td></tr>
+          <tr><td>开始时间</td><td>{$event['start_time']}</td></tr>
+          <tr><td>结束时间</td><td>{$event['end_time']}</td></tr>
+          <tr><td>最后更新时间</td><td>{$event['update_time']}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="span10">
+      <table class="table table-bordered">
+        <h3 class="text-center">活动基本资料</h3>
+        <thead><tr><th>项目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td class="span2">活动名称</td><td>{$event['name']}</td></tr>
+          <tr><td>活动海报</td><td><img src="{$event['middle_img']}"></td></tr>
+          <tr><td>当前状态</td><td>{$event['show_status']}</td></tr>
+          <tr><td>创建人</td><td>{$event['user']['nickname']}</td></tr>
+          <tr><td>活动地点</td><td>{$event['location']}</td></tr>
+          <tr><td>活动分类</td><td>{$event['category']}  {$event['sub_category']}</td></tr>
+          <tr><td>活动标签</td>
+            <td>
+              <foreach name="event['EventTag']" item="tag">
+                <span class="label label-info">{$tag['name']}</span>
+              </foreach>
+            </td>
+          </tr>
+          <tr><td>活动详情</td><td>{$event['description']}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript">
+$(function(){
+  $('#delete').bind('click',function(){
+    option = {
+      title:'系统提示',
+      body:'<p class="text-error">是否确定删除此活动(不可恢复)!</p>',
+      onok:function(){
+        $.get("{:U('Event/deleteEvent',array('id'=>$event['id']))}",function(data){
+          if(data.status == 1){
+            $('.notifications').notify({
+              type:'success',
+              message: { text: '删除成功，正在跳转!' }
+            }).show();  
+            var url = "{:U('Event/myEvent')}";
+            setTimeout(function(){window.location.href = url;},2000);
+            close_pop_box();
+          }else{
+            close_pop_box();
+            $('.notifications').notify({
+              type:'error',
+              message: { text: '删除失败!' }
+            }).show();  
+          }
+        });
+      }
+    };
+    show_pop_box(option);
+  });
+});
+</script>
+</block>

@@ -1,0 +1,136 @@
+<!DOCTYPE html> 
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="weilu544@gmail.com">
+	<title>天天活动</title>
+	<link rel="stylesheet" type="text/css" href="lib/css/jq.ui1.css" title="default"/>
+	<link rel="stylesheet" type="text/css" href="lib/css/icons.css" title="default"/>
+	<script type="text/javascript" charset="utf-8" src="lib/jq.mobi.js"></script>
+	<script type="text/javascript" charset="utf-8" src="lib/jq.ui.min.js"></script>
+	<script src="lib/tt.core.js"></script>
+	<script src="lib/iscroll.js"></script>
+	<script src="lib/tt.js"></script>
+	<script src="lib/jq.template.js"></script>
+	<phonegap></phonegap>
+	<script>
+       var init = function(){$.ui.backButtonText="返回";};
+         document.addEventListener("DOMContentLoaded",init,false);  
+	</script>
+	</head>
+<body>
+<div id="jQUi">
+	<div id="header">
+	    <a id="backButton" href="javascript:;" class="button" style="visibility: hidden; width: 80px"></a> 
+	    <h1 id="pageTitle">天天活动</h1> 
+	</div>
+	<div id="content">
+		<div title="热门活动" id="main" class="panel" selected="true" data-load="hotevent_init" data-refresh-ajax="true">
+			<ul id="he-list">
+			</ul>
+		</div><!--热门活动-->
+
+		<!--活动详情-->
+		<div id="event_detail" title="活动详情" class="panel" data-footer="none">
+			<div id="event_detail_tmpl">
+			</div>
+		</div>
+		<!---->
+
+		<!--参加活动填写资料-->
+		<div id="event_join" title="个人信息（真实）" class="panel" data-footer="none">
+			<form>
+				<p>请认真填写以下个人信息，此信息将用于活动举办方通知活动进行情况及互动使用。</p><br/>
+
+				<label for="event_email" >邮箱:</label><br/>
+				<input type="text" id="event_email" class="jq-ui-forms" placeholder="Email@ttevent.com" /><br/>
+
+				<label for="real_name">真实姓名:</label><br/>
+				<input type="text" id="real_name" class="jq-ui-forms" /><br/>
+
+				<label for="mobile" >手机:</label><br/>
+				<input type="text" id="mobile" class="jq-ui-forms"/><br/>
+
+				<a class="button" id="follow_button" style="width: 120px" onclick="event_join()" >参与</a>
+				<a class="button" id="back_Button" style="width: 120px">返回</a>
+			</form>
+		</div>
+		<!---->
+		<div id="QRcode" title="扫描二维码" class="panel">
+			<p style="align='center">扫描二维码来参加活动吧！</p>
+	    	<img style="float: center" src="images/QRcode.png">
+	    	<a class="button" id="login_button" style="float: center; width: 120px" onclick="QRscan()" >扫描</a>
+		</div>
+
+		<div id="settings" title="设置" class="panel" data-footer="none">
+			<ul>
+				<li><a href="#" >个人资料</a></li>
+				<li><a href="#" >修改密码</a></li>
+				<li><a href="#" >清除缓存</a></li>
+				<li><a href="#" >反馈</a></li>
+				<li><a href="" onclick="" >退出</a></li>
+			</ul>
+		</div>
+
+	</div><!--中间的显示区域content-->
+
+	<div id="navbar" style="margin: 0;float:left;">
+		<a href="news.html" id="nav_news">动态</a>
+	    <a href="#main" id="nav_hotevent">热门活动</a>
+	    <a href="myevent.html" id="nav_myevent">我的活动</a>
+	    <a href="#QRcode" id="nav_qrcode">二维码</a>
+	    <a href="#settings" id="nav_settings">设置</a>
+	</div><!--navbar -->
+</div>	<!--ui-->
+<script>
+	function showHide(obj,objToHide){
+	  var el=$("#"+objToHide)[0];
+	  if(obj.className=="expanded"){
+	    obj.className="collapsed";
+	  }else{
+	    obj.className="expanded";
+	  }
+	  $(el).toggle();
+	}
+</script>
+<script id="event_detail_tpl" type="text/html">
+	<h2 class='expanded' onclick='showHide(this,"event_detail_info");'>活动详情</h2>
+	<div id="event_detail_info">
+		<img style="float: right; width: 100px" src="<%=item.small_img%>">
+		<h3><%=item.name%></h3>
+		<p>时  间：<%=getDate(item.start_time) + " — " + getDate(item.end_time)%><br />
+		   地  点：<%=item.city + " " + item.area + " " + item.location%><br />
+		   主办方：<%=item.user.nickname%><br />
+		   状  态：<%=item.user.status%><br />
+		   <strong><%=item.join_count%></strong>人参加 <strong><%=item.follow_count%></strong>人关注
+		</p>
+		<p>活动详情：<%=item.description%></p>
+		<form>
+			<% if( item.is_follow ){ %>
+				<% console.log("已关注过,b_event_follow"); %>
+				<input type="button" class="button" id="b_event_follow" onclick="event_unfollow(<%=item.id%>);" value="取消关注" style="width: 80px">
+			<% } else {%>
+				<input type="button" class="button" id="b_event_follow" onclick="event_follow(<%=item.id%>);"  value="关注" style="width: 80px">
+			<% } %>	
+			<% if( item.is_joined ){ %>
+				<% console.log("已参与过,b_event_join"); %>
+				<input type="button" class="button" id="b_event_join" onclick="event_unjoin(<%=item.id%>);" href="" value="取消参与" style="width: 80px">
+			<% } else {%>
+				<input type="button" class="button" id="b_event_join" onclick="" href="#event_join"  value="参与" style="width: 80px">
+			<% } %>
+		</form>
+
+	</div>
+	<h2 class='expanded' onclick='showHide(this,"event_time_info");'>活动时间表</h2>
+	<div id="event_time_info">
+		<ul>
+		<% for (var key in item.schedule) { %>
+			<li><p><%=getDate(key)%> : <%=item.schedule[key] %></p></li>
+		<% } %>
+		</ul>
+	</div>
+
+</script>
+</body>	
+</html>

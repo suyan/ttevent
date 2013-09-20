@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <include file="Public:header" />
+  <block name="css"></block>
+</head>
+<body>
+  <div id="wrap">
+    <block name="header">
+      <include file="Public:navbar"/>
+    </block>
+    <div class="container">
+    <br>
+    <block name="breadcrumb">
+      <include file="Public:breadcrumb" />
+    </block>
+    <div class="row">
+      <div class="span12">
+        <div class="row">
+          <block name="nav_list">
+            <include file="Public:navlist" />
+          </block>
+          <block name="main">
+            <div class="span10">
+            </div>
+          </block>
+        </div>
+      </div>
+    </div>
+    </div> 
+    <div id="push"></div>
+  </div>
+  <block name="footer">
+    <include file="Public:bodyfooter" />
+  </block>
+  <include file="Public:footer" />
+  <block name="js"></block>
+</body>
+</html>

@@ -1,0 +1,1 @@
+<?php if (!defined('THINK_PATH')) exit();?>活动北京欢乐谷 电子门票免费抢！！抓取完成<br>

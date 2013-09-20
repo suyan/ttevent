@@ -1,0 +1,53 @@
+<extend name="User:base" />
+<block name="main">
+<div class="span7">
+  <div>
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#allFeeds" data-toggle="tab">全部动态</a></li>
+      <!-- <li><a href="#eventFeeds" data-toggle="tab">活动动态</a></li>
+      <li><a href="#userEvents" data-toggle="tab">用户动态</a></li> -->
+    </ul>
+  </div>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade in active" id="allFeeds">
+      <if condition="$data['feeds']">
+        <ul class="media-list" id='feedWall'>
+          {:W('Feed',$data)}
+        </ul>
+        <div class="text-center well well-small"><a href="javascript:;" id="getMore">获取更多</a></div>
+      <else />
+        <p class="text-center">还没有动态</p>
+      </if>
+    </div>
+    <div class="tab-pane fade" id="eventFeeds"></div>
+    <div class="tab-pane fade" id="userFeeds"></div>
+  </div>
+</div>
+</block>
+<block name="js">
+<script>
+  $(function(){
+    var click = false;
+    $('#getMore').click(function(e){
+      if(!click){
+        click = true;
+        e.preventDefault();
+        var button=$(this);
+        button.html('<img src="__PUBLIC__/img/loading.gif" />');  
+        $.get('{:U("User/getfeed")}'+'/id/'+$('#feedWall li:last-child').attr('id'),function(data){
+          if(data.length<10){
+            $('.notifications').notify({
+              type:'error',
+              message: { text: '已经没有新的动态了' }
+            }).show();  
+          }else{
+            $('#feedWall').append(data);
+          }
+          button.html('获取更多');
+          click = false;
+        });
+      }
+    });
+  });
+</script>
+</block>

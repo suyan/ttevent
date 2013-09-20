@@ -1,0 +1,41 @@
+<extend name="Public:base" />
+<block name="css">
+<style type="text/css">
+</style>
+</block>
+<block name="header">
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="{:U('Public/index')}">{:C('SITE_NAME')}</a>
+      <ul class="nav">
+        <li><a href="javascript:;">随时随地参与活动</a><li>
+      </ul>
+      <ul class="nav pull-right">
+        <li><a href="{:U('Public/register')}">注册</a></li>
+        <li><a href="{:U('Public/login')}">登录</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</block>
+<block name="body">
+<div class="container">
+  <br>
+  <ul class="breadcrumb">
+    <li><a href="">首页</a> <span class="divider">/</span></li>
+    <li class="active">注册</li>
+  </ul>
+  <div class="span12">
+    <div class="row">
+      <div class="span6">
+        {:W("Form",$data)}
+      </div>
+      <div class="span4 offset1">
+        <br>
+        <h4>第三方帐号登录</h4>
+      </div>
+    </div>
+  </div>
+</div> 
+</block>

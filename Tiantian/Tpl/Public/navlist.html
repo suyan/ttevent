@@ -1,0 +1,10 @@
+<div class="span2">
+  <ul class="nav nav-pills nav-stacked">
+    <foreach name="nav_list" item="item">
+      <li class="nav-header">{$key}</li>
+      <foreach name="item" item="li">
+        <li class="{$li[2]?'active':''}"><a href="{$li[1]}">{$li[0]}</a></li>
+      </foreach>
+    </foreach>
+  </ul>
+</div>

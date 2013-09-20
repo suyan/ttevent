@@ -1,0 +1,37 @@
+<extend name="EventCreate:base" />
+<block name="main">
+<div class="span10">
+  <div class="row">
+    <div class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="type">*活动类型</label>
+        <div class="controls">
+          <label class="radio">
+            <input type="radio" id="offline" value="0" checked>
+            线下活动
+          </label>
+          <label class="radio inline disabled">
+            <input type="radio" id="online" value="1" disabled>
+            线上活动<span class="text-error">(赞不支持)</span>
+          </label>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button id="submit" class="btn btn-primary">下一步</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</block>
+<block name="js">
+<script type="text/javascript">
+$('#submit').bind('click',function(){
+  if($("#offline").attr('checked'))
+    window.location.href = '{:U("EventCreate/offlineEventInfo")}';
+  else
+    window.location.href = '{:U("EventCreate/onlineEventInfo")}';
+});
+</script>
+</block>

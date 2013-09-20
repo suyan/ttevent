@@ -1,0 +1,289 @@
+<extend name="EventManage:base" />
+<block name="css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/datetimepicker.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap-tagmanager.css">
+</block>
+<block name="main">
+  <div class="span10">
+    <div class="alert alert-error hide">
+      <button type="button" class="close">&times;</button>
+      <div id="error_info"></div>
+    </div>
+    <div class="row">
+      <form class="form-horizontal" id="eventForm" action="{:U('EventCreate/offlineEventInfoSave',array('id'=>$id))}" method="POST">
+        <div class="control-group">
+          <label class="control-label" for="name">*活动名称</label>
+          <div class="controls">
+            <input type="text" name="name" class="span6" id="name" value="{:isset($event_name)?$event_name:''}">
+          </div>
+        </div><!-- 活动名称 -->
+        <div class="control-group">
+          <label class="control-label" for="pic">*活动分类</label>
+          <div class="controls">
+            <input type="hidden" name="category_select">
+          </div>
+        </div><!-- 活动分类 -->
+        <div class="control-group">
+          <label class="control-label" for="start_time">*活动时间</label>
+          <div class="controls">
+            <div class="input-append date form_datetime" id="start_time">
+                <input type="text" name="start_time" class="span2" placeholder="开始时间" value="{:isset($start_time)?$start_time:''}" readonly>
+                <span class="add-on"><i class="icon-calendar"></i></span>
+            </div>
+            <div class="input-append date form_datetime" id="end_time">
+                <input type="text" name="end_time" class="span2" placeholder="结束时间" value="{:isset($end_time)?$end_time:''}" readonly>
+                <span class="add-on"><i class="icon-calendar"></i></span>
+            </div>
+          </div>
+        </div><!-- 活动时间 -->
+        <div class="control-group" id="schedule">
+          <label class="control-label" for="schedule_time">*日程安排</label>
+          <present name="schedule">
+            <foreach name="schedule" item='value'>
+              <div class="controls">
+                <div class="input-append">
+                  <div class="input-append date form_datetime">
+                    <input type="text" class="span2" placeholder="时间节点" readonly name="schedule_time[]" value="{:date('Y-m-d G:i',$key)}">
+                    <span class="add-on"><i class="icon-calendar"></i></span>  
+                  </div>
+                  <input type="text" placeholder="安排" name="schedule_text[]" value="{$value}">
+                  <a class="btn add_input"><i class="icon-plus"></i></a>
+                  <a class="btn remove_input"><i class="icon-minus"></i></a>
+                </div>
+              </div>
+            </foreach>  
+          <else/>
+            <div class="controls">
+              <div class="input-append">
+                <div class="input-append date form_datetime">
+                  <input type="text" class="span2" placeholder="时间节点" readonly name="schedule_time[]" value="">
+                  <span class="add-on"><i class="icon-calendar"></i></span>  
+                </div>
+                <input type="text" placeholder="安排" name="schedule_text[]" value="">
+                <a class="btn add_input"><i class="icon-plus"></i></a>
+                <a class="btn remove_input"><i class="icon-minus"></i></a>
+              </div>
+            </div>
+          </present>
+        </div><!-- 日程安排 -->
+        <div class="control-group">
+          <label class="control-label" for="location">*活动地点</label>
+          <div class="controls">
+            <input type="hidden" name="location_select">
+            <br><br>
+            <input type="text" class="span7" name="location" value="{:isset($location)?$location:''}" placeholder="详细地址">
+          </div>
+        </div><!-- 活动地点 -->
+        <div class="control-group">
+          <label class="control-label" for="description">*活动详情</label>
+          <div class="controls">
+            <textarea style="width:100%;height:200px;" id="description" name="description">{:isset($description)?$description:''}</textarea>
+          </div>
+        </div><!-- 活动描述 -->
+        <div class="control-group">
+          <label class="control-label" for="eventBilling">*活动费用</label>
+          <div class="controls">
+            <label class="radio inline">
+              <input type="radio" name="eventBilling" value="0" checked>
+              免费
+            </label>
+            <label class="radio inline disabled">
+              <input type="radio" name="eventBilling" value="1" disabled>
+              收费<span class="text-error">(赞不支持)</span>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="joinType">*参加方式</label>
+          <div class="controls">
+            <label class="radio inline">
+              <input type="radio" name="joinType" value="0" checked>
+              所有人都可参加
+            </label>
+            <label class="radio inline disabled">
+              <input type="radio" name="joinType" value="1">
+              只能通过邀请参加
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="showType">*显示情况</label>
+          <div class="controls">
+            <label class="radio inline">
+              <input type="radio" name="showType" value="0" checked>
+              可见
+            </label>
+            <label class="radio inline">
+              <input type="radio" name="showType" value="1">
+              不可见
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="tags">活动标签</label>
+          <div class="controls">
+            <input name="tags" autocomplete="off" placeholder="回车添加标签" class="tagManager">
+          </div>
+        </div><!-- 活动标签 -->
+        <div class="form-actions">
+          <button type="submit" id="submit" class="btn btn-primary" data-loading-text="正在处理...">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</block>
+<block name="js">
+<script type="text/javascript" src="__PUBLIC__/js/kindeditor/kindeditor-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-tagmanager.js"></script>
+<script src="__PUBLIC__/js/jquery.optionTree.js"></script>
+<script type="text/javascript">
+$(function () { 
+  var category_select = {
+    empty_value: 'null',
+    indexed: true,
+    on_each_change: '{:U("Ajax/getCategory")}',
+    choose: function(level) {
+      if(level==0) return '请选择分类';
+      if(level==1) return '请选择子分类';
+    },
+    preselect: { 'category_select' : [ '{$event_category}' , '{$event_sub_category}' ]},
+    preselect_only_once: true, 
+    loading_image:'__PUBLIC__/img/loading.gif',
+    select_class:'span2',
+    get_parent_value_if_empty: true,
+  };
+  $.getJSON('{:U("Ajax/getCategory")}', function(tree) {
+    $('input[name=category_select]').optionTree(tree, category_select);
+  });
+  $(".form_datetime").datetimepicker({
+    format: "yyyy-MM-dd hh:ii",
+    autoclose: true,
+    minuteStep: 10,
+    language: 'zh-CN',
+    todayBtn:true
+  });
+  var start_time;
+  var end_time;
+  $('#start_time').datetimepicker().on('changeDate',function(e){
+    start_time = new Date(e.date.valueOf());
+    $('#end_time').datetimepicker('setStartDate',start_time);
+  });
+  $('#end_time').datetimepicker().on('changeDate',function(e){
+    end_time = new Date(e.date.valueOf());
+    $('#start_time').datetimepicker('setEndDate',end_time);
+  });
+  $('.add_input').live('click',function(){
+    $(this).parents('.controls').after('<div class="controls"><div class="input-append"><div class="input-append date form_datetime extra_date"><input type="text" class="span2" placeholder="时间节点" readonly name="schedule_time[]"><span class="add-on"><i class="icon-calendar"></i></span></div><input type="text" placeholder="安排" name="schedule_text[]"><a class="btn add_input"><i class="icon-plus"></i></a><a class="btn remove_input"><i class="icon-minus"></i></a></div></div>');
+    $(".extra_date").datetimepicker({
+      startDate:start_time,
+      endDate:end_time,
+      format: "yyyy-MM-dd hh:ii",
+      autoclose: true,
+      minuteStep: 10,
+      language: 'zh-CN',
+      todayBtn:true
+    });
+  });
+  $('.remove_input').live('click',function(){
+    if($('#schedule').children('.controls').length > 1)
+      $(this).parents('.controls').remove();
+    else
+      $('.notifications').notify({message: { text: '唯一一条日程不可删除' }, type: 'error' }).show();
+  });
+  var location_options = {
+    empty_value: 'null',
+    indexed: true,
+    on_each_change: '{:U("Ajax/getRegion")}',
+    choose: function(level) {
+      if(level==0) return '请选择省份';
+      if(level==1) return '请选择城市';
+      if(level==2) return '请选择区域';
+    },
+    preselect: { 'location_select' : [ '{$province}' , '{$city}' , '{$area}' ]},
+    preselect_only_once: true, 
+    loading_image:'__PUBLIC__/img/loading.gif',
+    select_class:'span2',
+    get_parent_value_if_empty: true,
+  };
+  $.getJSON('{:U("Ajax/getRegion")}', function(tree) {
+    $('input[name=location_select]').optionTree(tree, location_options);
+  });
+  $('.tagManager').tagsManager({
+    hiddenTagListName: 'tag',
+    typeahead: true,
+    typeaheadAjaxSource: '{:U("Event/getEventTag")}'+'/tag/',
+    typeaheadAjaxPolling: true,
+    <?php echo isset($tag)?'prefilled:"'.$tag.'",':''; ?>
+  });
+  var editor = KindEditor.create('#description',{
+    resizeType : 1,
+    allowPreviewEmoticons : false,
+    allowImageUpload : false,
+    items : [
+      'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+      'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+      'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+  });
+  var options = {
+    beforeSubmit:validateForm,
+    success:showResponse,
+    clearForm:false
+  }
+  var submit = $("#submit");
+  $('.alert .close').live("click", function(e) {
+      $(this).parent().hide();
+  });
+  function show_error(txt){
+    $('#error_info').html(txt).parent('div').show();
+  }
+  function check_schedule(){
+    var schedule = true;
+    $('#schedule .controls').each(function(){
+      if(!$(this).find('[name="schedule_time[]"]').val() || !$(this).find('[name="schedule_text[]"]').val())
+        schedule=false;
+    });
+    return schedule;
+  }
+  function validateForm(formData,jqForm,options){
+    submit.button('loading');
+    $('#description').html(editor.html());
+    if(!$('#name').val()){
+      show_error('请填写活动名称');
+    }else if($('select[name=category_select_]').val() == 0){
+      show_error('请选择分类');
+    }else if($('select[name=category_select__]').val() == 0){
+      show_error('请选择子分类');
+    }else if(!$('input[name=start_time]').val() || !$('input[name=end_time]')){
+      show_error('请选择活动时间');
+    }else if($('select[name=location_select_]').val() == 0){
+      show_error('请选择省份');
+    }else if($('select[name=location_select__]').val() == 0){
+      show_error('请选择城市');
+    }else if($('select[name=location_select___]').val() == 0){
+      show_error('请选择区域');
+    }else if(!$('#description').html()){
+      show_error('请填写活动详情');
+    }else if(!check_schedule()){
+      show_error('请完善活动日程安排');
+    }else{
+      return true;
+    }
+    submit.button('reset');
+    return false;
+  }
+  function showResponse(ret,statusText){
+    submit.button('reset');
+    if(ret.status==0){
+      $('#error_info').html(ret.info).parent('div').show();
+    }else{
+      $('.notifications').notify({message: { text: ret.info }}).show();
+    }
+  }
+  $('#eventForm').ajaxForm(options);
+}); 
+</script>
+</block>
