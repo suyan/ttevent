@@ -3,7 +3,7 @@ ttevent
 
 ## Introduction 
 
-A events site in 2013. It can be deployed on SAE and BAE and standard Apache.
+An events website in 2013. It can be deployed on SAE and BAE and standard Apache.
 
 ## Requirements
 
